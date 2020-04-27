@@ -18,7 +18,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 //import javafx.scene.control.Menu;
 //import javafx.scene.control.MenuBar;
-import javafx.scene.control.MenuItem;
+//import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -32,8 +32,6 @@ import javafx.stage.Stage;
 public class Dealership extends Application
 {
     BorderPane dealershipPane = new BorderPane(); //Stage Pane
-    VBox mainPane = new VBox();
-    MenuItem close = new MenuItem("Close");
 
     public Dealership()
     {
@@ -96,18 +94,37 @@ public class Dealership extends Application
         });
 
         /* selecting contact store querys and displays store info */
+        contactBtn.setOnAction( contact ->{
+            VBox contactPane = new VBox(15);
+            HBox contactText = new HBox();
+            HBox goBack = new HBox();
+            Text contactInfo = new Text("Contact Info will be here!");
+            contactInfo.setFont(Font.font("Arial", 18));
+            Button returnBtn = new Button("Return");
+            returnBtn.setFont(Font.font("Arial", 18));
+            contactText.getChildren().addAll(contactInfo);
+            goBack.getChildren().addAll(returnBtn);
+            contactText.setAlignment(Pos.BOTTOM_CENTER);
+            goBack.setAlignment(Pos.CENTER);
+            contactPane.getChildren().addAll(contactText, goBack);
+            contactPane.setAlignment(Pos.CENTER);
+            dealershipPane.setCenter(contactPane);
 
+            /* goBack button returns to previous pane */
+            returnBtn.setOnAction( returnTo ->{homePage();});
+        });
 
         /* selecting browse displays inventory list */
         browseBtn.setOnAction( viewInventory ->{browseInventory();});
     }
 
+    /* General user inventory view */
     private void browseInventory()
     {
         /* Menu and options */
         VBox menubar = new VBox(50);
         Button contactBtn = new Button("Contact Store");
-        Button logInBtn = new Button("Log In");
+        Button logInBtn = new Button("Admin Log In");
         logInBtn.setFont(Font.font("Arial", 18));
         contactBtn.setFont(Font.font("Arial", 18));
 
@@ -117,12 +134,36 @@ public class Dealership extends Application
         dealershipPane.setLeft(menubar);
 
         /* show list of inventory*/
+        VBox inventoryList = new VBox();
+        Text inventoryMsg = new Text("Inventory List goes here!");
+        inventoryMsg.setFont(Font.font("Arial", 18));
+        inventoryList.getChildren().addAll(inventoryMsg);
+        inventoryList.setAlignment(Pos.CENTER);
+        dealershipPane.setCenter(inventoryList);
 
         /* selecting log in button displays home page */
         logInBtn.setOnAction( login ->{homePage();});
 
         /* selecting contact store displays store info */
+        contactBtn.setOnAction( contact ->{
+            VBox contactPane = new VBox(15);
+            HBox contactText = new HBox();
+            HBox goBack = new HBox();
+            Text contactInfo = new Text("Contact Info will be here!");
+            contactInfo.setFont(Font.font("Arial", 18));
+            Button returnBtn = new Button("Return");
+            returnBtn.setFont(Font.font("Arial", 18));
+            contactText.getChildren().addAll(contactInfo);
+            goBack.getChildren().addAll(returnBtn);
+            contactText.setAlignment(Pos.BOTTOM_CENTER);
+            goBack.setAlignment(Pos.CENTER);
+            contactPane.getChildren().addAll(contactText, goBack);
+            contactPane.setAlignment(Pos.CENTER);
+            dealershipPane.setCenter(contactPane);
 
+            /* goBack button returns to previous pane */
+            returnBtn.setOnAction( returnTo ->{browseInventory();});
+        });
     }
 
     private void adminHome()
@@ -143,7 +184,7 @@ public class Dealership extends Application
 
         /* display "Welcome!" on center stage */
         VBox welcome = new VBox();
-        Text hello = new Text("Welcome!");
+        Text hello = new Text("Welcome to the Admin page!");
         hello.setFont(Font.font("Arial", 18));
         welcome.getChildren().addAll(hello);
         welcome.setAlignment(Pos.CENTER);
@@ -160,6 +201,7 @@ public class Dealership extends Application
         logOut.setOnAction( logout ->{homePage();});
     }
 
+    /* admin inventory view */
     private void adminInventory()
     {
         /* menu and options */
@@ -181,16 +223,85 @@ public class Dealership extends Application
         dealershipPane.setLeft(menubar);
 
         /* list inventory for admin's store and update buttons for list */
-        
+        VBox inventoryList = new VBox();
+        Text inventoryMsg = new Text("Inventory List goes here!");
+        inventoryMsg.setFont(Font.font("Arial", 18));
+        inventoryList.getChildren().addAll(inventoryMsg);
+        inventoryList.setAlignment(Pos.CENTER);
+        dealershipPane.setCenter(inventoryList);
 
         /* selecting browse store admin displays admin list for admins only */
         browseAdminBtn.setOnAction( viewAdmin ->{adminList();});
 
         /* selecting add Vehicle opens pane with text fields to create new tuple */
+        addCarBtn.setOnAction( addcar ->{
+            /* panes for option inputs */
+            HBox addCarPane = new HBox(15);
+            VBox vinPane = new VBox(10);
+            VBox storePane = new VBox(10);
+            VBox pricePane = new VBox(10);
+            VBox yearPane = new VBox(10);
+            VBox makePane = new VBox(10);
+            VBox modelPane = new VBox(10);
+            VBox typePane = new VBox(10);
+            VBox colorPane = new VBox(10);
+            VBox mileagePane = new VBox(10);
+            VBox enterPane = new VBox();
 
+            /* textfields for options */
+            Text vinText = new Text("VIN");
+            vinText.setFont(Font.font("Arial", 18));
+            TextField vinField = new TextField();
+            Text storeText = new Text("Store ID");
+            storeText.setFont(Font.font("Arial", 18));
+            TextField storeField = new TextField();
+            Text priceText = new Text("Price");
+            priceText.setFont(Font.font("Arial", 18));
+            TextField priceField = new TextField();
+            Text yearText = new Text("Year");
+            yearText.setFont(Font.font("Arial", 18));
+            TextField yearField = new TextField();
+            Text makeText = new Text("Make");
+            makeText.setFont(Font.font("Arial", 18));
+            TextField makeField = new TextField();
+            Text modelText = new Text("Model");
+            modelText.setFont(Font.font("Arial", 18));
+            TextField modelField = new TextField();
+            Text typeText = new Text("Type");
+            typeText.setFont(Font.font("Arial", 18));
+            TextField typeField = new TextField();
+            Text colorText = new Text("Color");
+            colorText.setFont(Font.font("Arial", 18));
+            TextField colorField = new TextField();
+            Text mileageText = new Text("Mileage");
+            mileageText.setFont(Font.font("Arial", 18));
+            TextField mileageField = new TextField();
+            Button enterBtn = new Button("Enter");
+            enterBtn.setFont(Font.font("Arial", 18));
+
+            /* collect textfields into panes and display */
+            vinPane.getChildren().addAll(vinText, vinField);
+            storePane.getChildren().addAll(storeText, storeField);
+            pricePane.getChildren().addAll(priceText, priceField);
+            yearPane.getChildren().addAll(yearText, yearField);
+            makePane.getChildren().addAll(makeText, makeField);
+            modelPane.getChildren().addAll(modelText, modelField);
+            typePane.getChildren().addAll(typeText, typeField);
+            colorPane.getChildren().addAll(colorText, colorField);
+            mileagePane.getChildren().addAll(mileageText, mileageField);
+            enterPane.getChildren().addAll(enterBtn);
+            enterPane.setAlignment(Pos.CENTER);
+            addCarPane.getChildren().addAll(vinPane, storePane, pricePane, yearPane, makePane, modelPane, typePane, colorPane, mileagePane, enterPane);
+            addCarPane.setAlignment(Pos.BOTTOM_CENTER);
+            inventoryList.getChildren().addAll(addCarPane);
+            dealershipPane.setBottom(inventoryList);
+
+        });
         /* selecting update Vehicle opens pane with text fields to update tuple */
+        updateCarBtn.setOnAction( updatecar ->{});
 
         /* selecting delete Vehicle opens pane with text fields to delete tuple */
+        deleteCarBtn.setOnAction( deletecar ->{});
 
         /* selecting log out button logs admin out and returns to home page */
         // change loggedin boolean to false
@@ -198,6 +309,7 @@ public class Dealership extends Application
 
     }
 
+    /* admin view of admin list */
     private void adminList()
     {
         /* menu and options */
@@ -219,15 +331,24 @@ public class Dealership extends Application
         dealershipPane.setLeft(menubar);
 
         /* list inventory for admin's store and update buttons for list */
+        VBox adminList = new VBox();
+        Text adminMsg = new Text("List of store Admins goes here!");
+        adminMsg.setFont(Font.font("Arial", 18));
+        adminList.getChildren().addAll(adminMsg);
+        adminList.setAlignment(Pos.CENTER);
+        dealershipPane.setCenter(adminList);
 
         /* selecting browse inventory displays inventory page for admins only */
         browseInventoryBtn.setOnAction( viewInventory ->{adminInventory();});
 
         /* selecting add admin opens pane with text fields to create new tuple */
+        addAdminBtn.setOnAction( addadmin ->{});
 
         /* selecting update admin opens pane with text fields to update tuple */
- 
+        updateAdminBtn.setOnAction( updateadmin ->{});
+
         /* selecting delete admin opens pane with text fields to delete tuple */
+        deleteAdminBtn.setOnAction( deleteadmin ->{});
 
         /* selecting log out button logs admin out and returns to home page */
         // change loggedin boolean to false
@@ -249,8 +370,8 @@ public class Dealership extends Application
 		Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
 
 		/* set Stage boundaries to 3/4 size of computer screen & center */
-		primaryStage.setWidth(primaryScreenBounds.getWidth() * 0.75);
-		primaryStage.setHeight(primaryScreenBounds.getHeight() * 0.75);
+		primaryStage.setWidth(primaryScreenBounds.getWidth() * 0.8);
+		primaryStage.setHeight(primaryScreenBounds.getHeight() * 0.8);
 		primaryStage.centerOnScreen();
 
 		// set the scene, title and show the primary stage
@@ -258,6 +379,5 @@ public class Dealership extends Application
 		primaryStage.setTitle("Dealership Database");
 		primaryStage.show();
 		
-		close.setOnAction( exit ->{primaryStage.close();}); // action closes the stage window
 	}
 }
