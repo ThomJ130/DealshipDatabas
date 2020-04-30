@@ -10,21 +10,21 @@
 of this program is primarily my own work.
 ------------------------------------------------ */
 
-import java.sql.Array;
+//import java.sql.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 import javafx.application.Application;
-import javafx.beans.property.SimpleStringProperty;
+//import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
+//import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
-import javafx.scene.control.TableColumn;
+//import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 //import javafx.scene.control.Menu;
 //import javafx.scene.control.MenuBar;
@@ -230,7 +230,7 @@ public class Dealership extends Application
     {
         /* menu and options */
         HBox menubar = new HBox(25);
-        Button browseAdminBtn = new Button("Browse Store Admin");
+        Button browseAdminBtn = new Button("View Store Admin List");
         Button addCarBtn = new Button("Add Vehicle");
         Button updateCarBtn = new Button("Update Vehicle Info");
         Button deleteCarBtn = new Button("Delete Vehicle");
@@ -340,7 +340,7 @@ public class Dealership extends Application
             alterInventory.getChildren().addAll(addCarPane);
             dealershipPane.setCenter(alterInventory);
             enterBtn.setOnAction( addcarQuery ->{
-                dealerDB.addCar(vinField.getText(), colorField.getText(), mileageField.getText(), priceField.getText(), storeIDField.getText(), yearField.getText(), makeField.getText(), modelField.getText(), typeField.getText());
+                dealerDB.addCar(Integer.parseInt(vinField.getText()), colorField.getText(), Double.parseDouble(mileageField.getText()), Double.parseDouble(priceField.getText()), Integer.parseInt(storeField.getText()), Integer.parseInt(yearField.getText()), makeField.getText(), modelField.getText(), typeField.getText());
                 adminInventory();
             });
         });
@@ -348,20 +348,23 @@ public class Dealership extends Application
         updateCarBtn.setOnAction( updatecar ->{
             alterInventory.getChildren().addAll(addCarPane);
             dealershipPane.setCenter(alterInventory);
-            enterBtn.setOnAction( addcarQuery ->{
-                dealerDB.addCar(vinField.getText(), colorField.getText(), mileageField.getText(), priceField.getText(), storeIDField.getText(), yearField.getText(), makeField.getText(), modelField.getText(), typeField.getText());
-                adminInventory();
+            enterBtn.setOnAction( updatecarQuery ->{
+                /* dealerDB.addCar(Integer.parseInt(vinField.getText()), colorField.getText(), Double.parseDouble(mileageField.getText()), Double.parseDouble(priceField.getText()), Integer.parseInt(storeField.getText()), Integer.parseInt(yearField.getText()), makeField.getText(), modelField.getText(), typeField.getText());
+              */  adminInventory();
             });
         });
 
         /* selecting delete Vehicle opens pane with text fields to delete tuple */
         deleteCarBtn.setOnAction( deletecar ->{
-            dealershipPane.setCenter(inventoryPane);
-            alterInventory.getChildren().addAll(inventoryList, deleteCarPane);
+            alterInventory.getChildren().addAll(deleteCarPane);
             dealershipPane.setCenter(alterInventory);
+            enterBtn.setOnAction( deletecarQuery ->{
+                dealerDB.removeCar(vinField.getText());
+                adminInventory();
+            });
         });
 
-        /* selecting browse store admin displays admin list for admins only */
+        /* selecting view store admin displays admin list for admins only */
         browseAdminBtn.setOnAction( viewAdmin ->{adminList();});
 
         /* selecting log out button logs admin out and returns to home page */
