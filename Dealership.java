@@ -144,20 +144,8 @@ public class Dealership extends Application
         ObservableList<ArrayList<String>> inventory = FXCollections.observableArrayList(dealerDB.getAllCars());
         
         TableView<ArrayList<String>> inventoryList = new TableView<>();
-        final Label label = new Label("Address Book");
         inventoryList.setEditable(true);
         
-//        TableColumn<ArrayList<String>, String> 
-//        		vin = new TableColumn("VIN"), 
-//        		color = new TableColumn("Color"), 
-//        		mileage = new TableColumn("Mileage"), 
-//        		price = new TableColumn("Price"), 
-//        		storeID = new TableColumn("Store ID"), 
-//        		carYear = new TableColumn("Car Year"), 
-//        		make = new TableColumn("Make"), 
-//        		model = new TableColumn("Model"), 
-//        		carType = new TableColumn("Car Type");
-
         
         ModularTable allCarsTable = new ModularTable(new ArrayList<String>(Arrays.asList("VIN", "Color", "Mileage", "Price", "Store ID", "Car Year", "Make", "Model", "Car Type")));
         
@@ -260,11 +248,21 @@ public class Dealership extends Application
 
         /* list inventory for admin's store and update buttons for list */
         VBox inventoryPane = new VBox(10);
-        ObservableList<ArrayList<String>> inventory = FXCollections.observableArrayList(dealerDB.getAllCars());
-        //ObservableList<String> inventory = FXCollections.observableArrayList(dealerDB.getCarsBy(dealerDB.executeStatement("SELECT storeName FROM dealerships WHERE storeID = (SELECT storeID FROM admin WHERE username = " + admin.getUserName() + ");")));
-        ListView<ArrayList<String>> inventoryList = new ListView<>(inventory);
+        //ObservableList<ArrayList<String>> inventory = FXCollections.observableArrayList(dealerDB.getAllCars());
+        ObservableList<String> inventory = FXCollections.observableArrayList(dealerDB.getCarsBy(dealerDB.executeStatement("SELECT storeName FROM dealerships WHERE storeID = (SELECT storeID FROM admin WHERE username = " + admin.getUserName() + ");")));
+        
+        TableView<ArrayList<String>> inventoryList = new TableView<>();
+        inventoryList.setEditable(true);
+
+        ModularTable carsTable = new ModularTable(new ArrayList<String>(Arrays.asList("VIN", "Color", "Mileage", "Price", "Store ID", "Car Year", "Make", "Model", "Car Type")));
+
+        inventoryList.getColumns().addAll(carsTable.getColumns());
+        inventoryList.getItems().addAll(inventory);
+        System.out.println(inventoryList.getItems().get(0).size() + " " + dealerDB.getAllCars().get(0).size());
+        
         inventoryPane.getChildren().addAll(inventoryList);
         inventoryPane.setAlignment(Pos.CENTER);
+
         dealershipPane.setCenter(inventoryPane);
         
         VBox alterInventory = new VBox(10);
