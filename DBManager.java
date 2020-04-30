@@ -113,24 +113,52 @@ public class DBManager {
 		return result;
 	}
 	
-	public ArrayList<ArrayList<String>> getCarsBy(String storeName, String make, String model, Double mileageUpperBound, Double mileageLowerBound, Double priceUpperbound, Double priceLowerBound)
+	public ArrayList<ArrayList<String>> getCarsBy(String storeName, String make, String model, String carType, Double mileageUpperBound, Double mileageLowerBound, Double priceUpperbound, Double priceLowerBound)
 	{
-		// NOTE: use "-1" or -1 for any option that must be disabled
+		// NOTE: use null, "-1", or -1 for any option that must be disabled
 		
-		String[][] inventoryOptions = {{"storename = ", storeName}, {"AND make = ", make}, {" AND model = ", model}, {" AND mileage < ", mileageUpperBound.toString()}, {" AND mileage > ", mileageLowerBound.toString()},
-				{" AND price < ", priceUpperbound.toString()}, {" AND price > " + priceLowerBound}};
+		String[][] inventoryOptions = {{" make = ", make}, {" model = ", model}, {" carType = ", carType}, {" mileage < ", mileageUpperBound.toString()}, {" mileage > ", mileageLowerBound.toString()}, {" price < ", priceUpperbound.toString()}, {" price > ", priceLowerBound.toString()}};
+		String storeID = "-1";
 		
 		String conditions = "";
+		int index = 0;
+		int counter = 0;
+		
 		
 		for (String[] option : inventoryOptions)
 		{
-			if (!option[1].equals("-1"))
-			{
-				conditions = conditions + option[0];
+			System.out.println(option[0] + " " + option[1]);
+			if (option[1] != null && !option[1].equals("-1.0"))
+			{			
+				if (counter > 0)
+					conditions = conditions + " AND ";
+				
+				if (index < 3)
+					conditions = conditions + option[0] +  "\"" + option[1] + "\"";
+				else
+					conditions = conditions + option[0] + option[1];
+				counter++;
 			}
+			
+			index++;
 		}
 		
-		ArrayList<ArrayList<String>> result = executeStatement("SELECT * FROM dealerships WHERE " + conditions + ");");
+		if(storeName != null)
+		{
+			ArrayList<ArrayList<String>> result = executeStatement("SELECT storeID FROM dealerships WHERE storeName = \"" + storeName + "\";");
+			
+			if (!result.isEmpty())
+			{
+				storeID = result.get(0).get(0);
+				if (!conditions.isEmpty())
+					conditions = conditions + " AND storeID = " + storeID;
+				else
+					conditions = "storeID = " + storeID;
+			}	
+		}
+		
+		System.out.println("SELECT * FROM inventories WHERE " + conditions + ";");
+		ArrayList<ArrayList<String>> result = executeStatement("SELECT * FROM inventories WHERE " + conditions + ";");
 		
 		return result;
 	}

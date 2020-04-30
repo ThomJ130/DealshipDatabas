@@ -44,7 +44,8 @@ public class Dealership extends Application
     DBManager dealerDB = new DBManager();
     User admin = new User();
     BorderPane dealershipPane = new BorderPane(); //Stage Pane
-
+    SearchWrapper searcher;
+    
     public Dealership()
     {
         homePage();
@@ -131,11 +132,13 @@ public class Dealership extends Application
         HBox menubar = new HBox(25);
         Button contactBtn = new Button("Contact Store");
         Button logInBtn = new Button("Admin Log In");
+        Button searchBtn = new Button("Search Inventory");
         logInBtn.setFont(Font.font("Arial", 18));
         contactBtn.setFont(Font.font("Arial", 18));
+        searchBtn.setFont(Font.font("Arial", 18));
 
         /* Set main menu on stage left */
-        menubar.getChildren().addAll(logInBtn);//, contactBtn);
+        menubar.getChildren().addAll(logInBtn, searchBtn);//, contactBtn);
         menubar.setAlignment(Pos.CENTER);
         dealershipPane.setTop(menubar);
 
@@ -161,6 +164,76 @@ public class Dealership extends Application
         
         
         /* selecting log in button displays home page */
+        logInBtn.setOnAction( login -> {homePage();});
+        searchBtn.setOnAction( search -> {searchInventoryPage();});
+        /* selecting contact store displays store info */
+        contactBtn.setOnAction( contact ->{
+            VBox contactPane = new VBox(15);
+            HBox contactText = new HBox();
+            HBox goBack = new HBox();
+            Text contactInfo = new Text("Contact Info will be here!");
+            contactInfo.setFont(Font.font("Arial", 18));
+            Button returnBtn = new Button("Return");
+            returnBtn.setFont(Font.font("Arial", 18));
+            contactText.getChildren().addAll(contactInfo);
+            goBack.getChildren().addAll(returnBtn);
+            contactText.setAlignment(Pos.BOTTOM_CENTER);
+            goBack.setAlignment(Pos.CENTER);
+            contactPane.getChildren().addAll(contactText, goBack);
+            contactPane.setAlignment(Pos.CENTER);
+            dealershipPane.setCenter(contactPane);
+
+            /* goBack button returns to previous pane */
+            returnBtn.setOnAction( returnTo ->{browseInventory();});
+        });
+    }
+   
+
+    private void searchInventoryPage()
+    {
+        /* Menu and options */
+        HBox menubar = new HBox(25);
+        Button contactBtn = new Button("Contact Store");
+        Button logInBtn = new Button("Admin Log In");
+        Button returnToInventoryBtn = new Button("Return to Inventory");
+        Button searchBtn = new Button("Search");
+        logInBtn.setFont(Font.font("Arial", 18));
+        returnToInventoryBtn.setFont(Font.font("Arial", 18));
+
+        /* Set main menu on stage left */
+        menubar.getChildren().addAll(logInBtn, returnToInventoryBtn);//, contactBtn);
+        menubar.setAlignment(Pos.CENTER);
+        dealershipPane.setTop(menubar);
+
+        /* Search Fields */
+        ObservableList<ArrayList<String>> inventory = FXCollections.observableArrayList(dealerDB.getAllCars());
+        
+        VBox searchFieldPane = new VBox();
+        
+        searcher = new SearchWrapper(inventory); // Not sure how else to update the results with a button :(
+        
+        for (InputField field : searcher.getAllFields())
+        {
+        	 searchFieldPane.getChildren().add(field.getPane());
+        }
+        
+        searchFieldPane.getChildren().add(searchBtn);
+        
+        /* show list of inventory*/
+        SearchWrapper.inventoryList = new TableView<>();
+        SearchWrapper.inventoryList.setEditable(true);
+        
+        ModularTable allCarsTable = new ModularTable(new ArrayList<String>(Arrays.asList("VIN", "Color", "Mileage", "Price", "Store ID", "Car Year", "Make", "Model", "Car Type")));
+        
+        SearchWrapper.inventoryList.getColumns().addAll(allCarsTable.getColumns());
+        
+        SearchWrapper.inventoryList.getItems().addAll(SearchWrapper.getObservableList());
+        
+        dealershipPane.setLeft(searchFieldPane);
+        dealershipPane.setCenter(SearchWrapper.inventoryList);
+        
+        
+        /* selecting log in button displays home page */
         logInBtn.setOnAction( login ->{homePage();});
 
         /* selecting contact store displays store info */
@@ -183,8 +256,54 @@ public class Dealership extends Application
             /* goBack button returns to previous pane */
             returnBtn.setOnAction( returnTo ->{browseInventory();});
         });
+        
+        /* Search Logic */
+        searchBtn.setOnAction( e -> {
+        	
+        	ArrayList<InputField> allFields = searcher.getAllFields();
+        	
+        	String storeName = allFields.get(0).getInput().get(0);
+        	String make = allFields.get(1).getInput().get(0);
+        	String model = allFields.get(2).getInput().get(0);
+        	String carType = allFields.get(3).getInput().get(0);
+        	double priceUpper;
+        	double priceLower;
+        	double mileageUpper;
+        	double mileageLower;
+        	
+        	
+        	if (allFields.get(4).getInput().get(0) != null)
+        		priceUpper = Double.parseDouble(allFields.get(4).getInput().get(0));
+        	else
+        		priceUpper = -1;
+        		
+        	if (allFields.get(4).getInput().get(1) != null)
+        		priceLower = Double.parseDouble(allFields.get(4).getInput().get(1));
+        	else
+        		priceLower = -1;
+        	
+        	if (allFields.get(5).getInput().get(0) != null)
+        		mileageUpper = Double.parseDouble(allFields.get(5).getInput().get(0));
+        	else
+        		mileageUpper = -1;
+        	
+        	if (allFields.get(5).getInput().get(1) != null)
+        		mileageLower = Double.parseDouble(allFields.get(5).getInput().get(1));
+        	else
+        		mileageLower = -1;
+        	
+        	
+        	dealershipPane.setCenter(SearchWrapper.updateObservable(dealerDB.getCarsBy(storeName, make, model, carType, priceUpper, priceLower, mileageUpper, mileageLower)));
+        	
+        });
+        
+        returnToInventoryBtn.setOnAction( retrn -> {browseInventory();});
+        
+
     }
 
+    
+    
     private void adminHome()
     {
         /* menu and options */
