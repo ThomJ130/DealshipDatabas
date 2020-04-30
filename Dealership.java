@@ -1,4 +1,3 @@
-//package Dealership;
 
 /* -----------------------------------------------
 	 Submitted By: Dillon Mead, John Thompson
@@ -11,11 +10,17 @@
 of this program is primarily my own work.
 ------------------------------------------------ */
 
+import java.sql.Array;
+import java.util.ArrayList;
+
 import javafx.application.Application;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ListView;
 //import javafx.scene.control.Menu;
 //import javafx.scene.control.MenuBar;
 //import javafx.scene.control.MenuItem;
@@ -31,6 +36,8 @@ import javafx.stage.Stage;
 
 public class Dealership extends Application
 {
+    DBManager dealerDB = new DBManager();
+    User admin = new User();
     BorderPane dealershipPane = new BorderPane(); //Stage Pane
 
     public Dealership()
@@ -41,7 +48,7 @@ public class Dealership extends Application
     private void homePage()
     {
         /* Menu and options */
-        VBox menubar = new VBox(50);
+        HBox menubar = new HBox(25);
         Button browseBtn = new Button("Browse Inventory");
         //Button locationBtn = new Button("Location");
         Button contactBtn = new Button("Contact Store");
@@ -50,9 +57,9 @@ public class Dealership extends Application
         contactBtn.setFont(Font.font("Arial", 18));
 
         /* Set main menu on stage left */
-        menubar.getChildren().addAll(browseBtn, contactBtn);//, locationBtn);
+        menubar.getChildren().addAll(browseBtn);//, contactBtn, locationBtn);
         menubar.setAlignment(Pos.CENTER);
-        dealershipPane.setLeft(menubar);
+        dealershipPane.setTop(menubar);
 
         /* Create main menu log in text fields */
         VBox logInFields = new VBox(15);
@@ -81,16 +88,10 @@ public class Dealership extends Application
 
         /* log in performs verification query and changes pane if correct */
         enterBtn.setOnAction( loggingin ->{
-            /* verification query & change loggedin boolean to true
-        if (loggedin)
-        {
+            admin.setUserName(inputUsername.getText());
+            admin.setPassword(inputPassword.getText());
+            dealerDB.loginAdmin(admin.getUserName(), admin.getPassword());
             adminHome();
-        }
-        else
-        {
-            wronglogin.setVisible(true);
-        } */
-        adminHome();
         });
 
         /* selecting contact store querys and displays store info */
@@ -122,24 +123,24 @@ public class Dealership extends Application
     private void browseInventory()
     {
         /* Menu and options */
-        VBox menubar = new VBox(50);
+        HBox menubar = new HBox(25);
         Button contactBtn = new Button("Contact Store");
         Button logInBtn = new Button("Admin Log In");
         logInBtn.setFont(Font.font("Arial", 18));
         contactBtn.setFont(Font.font("Arial", 18));
 
         /* Set main menu on stage left */
-        menubar.getChildren().addAll(logInBtn, contactBtn);
+        menubar.getChildren().addAll(logInBtn);//, contactBtn);
         menubar.setAlignment(Pos.CENTER);
-        dealershipPane.setLeft(menubar);
+        dealershipPane.setTop(menubar);
 
         /* show list of inventory*/
-        VBox inventoryList = new VBox();
-        Text inventoryMsg = new Text("Inventory List goes here!");
-        inventoryMsg.setFont(Font.font("Arial", 18));
-        inventoryList.getChildren().addAll(inventoryMsg);
-        inventoryList.setAlignment(Pos.CENTER);
-        dealershipPane.setCenter(inventoryList);
+        VBox inventoryPane = new VBox();
+        ObservableList<String> inventory = FXCollections.observableArrayList(dealerDB.getAllCars());
+        ListView<String> inventoryList = new ListView<String>(inventory);
+        inventoryPane.getChildren().addAll(inventoryList);
+        inventoryPane.setAlignment(Pos.CENTER);
+        dealershipPane.setCenter(inventoryPane);
 
         /* selecting log in button displays home page */
         logInBtn.setOnAction( login ->{homePage();});
@@ -169,7 +170,7 @@ public class Dealership extends Application
     private void adminHome()
     {
         /* menu and options */
-        VBox menubar = new VBox(50);
+        HBox menubar = new HBox(25);
         Button browseInventoryBtn = new Button("Browse Inventory");
         Button browseAdminBtn = new Button("Browse Store Admin");
         Button logOut = new Button("Log Out");
@@ -180,7 +181,7 @@ public class Dealership extends Application
         /* Set main menu on stage left */
         menubar.getChildren().addAll(browseInventoryBtn, browseAdminBtn, logOut);
         menubar.setAlignment(Pos.CENTER);
-        dealershipPane.setLeft(menubar);
+        dealershipPane.setTop(menubar);
 
         /* display "Welcome!" on center stage */
         VBox welcome = new VBox();
@@ -198,14 +199,16 @@ public class Dealership extends Application
 
         /* selecting log out button logs admin out and returns to home page */
         // change loggedin boolean to false
-        logOut.setOnAction( logout ->{homePage();});
+        logOut.setOnAction( logout ->{
+            dealerDB.logoutAdmin(admin.getUserName());
+            homePage();});
     }
 
     /* admin inventory view */
     private void adminInventory()
     {
         /* menu and options */
-        VBox menubar = new VBox(50);
+        HBox menubar = new HBox(25);
         Button browseAdminBtn = new Button("Browse Store Admin");
         Button addCarBtn = new Button("Add Vehicle");
         Button updateCarBtn = new Button("Update Vehicle Info");
@@ -220,23 +223,25 @@ public class Dealership extends Application
         /* Set main menu on stage left */
         menubar.getChildren().addAll(browseAdminBtn, addCarBtn, updateCarBtn, deleteCarBtn, logOut);
         menubar.setAlignment(Pos.CENTER);
-        dealershipPane.setLeft(menubar);
+        dealershipPane.setTop(menubar);
 
         /* list inventory for admin's store and update buttons for list */
-        VBox inventoryList = new VBox();
-        Text inventoryMsg = new Text("Inventory List goes here!");
-        inventoryMsg.setFont(Font.font("Arial", 18));
-        inventoryList.getChildren().addAll(inventoryMsg);
-        inventoryList.setAlignment(Pos.CENTER);
-        dealershipPane.setCenter(inventoryList);
+        VBox inventoryPane = new VBox(10);
+        ObservableList<String> inventory = FXCollections.observableArrayList(dealerDB.getAllCars());
+        //ObservableList<String> inventory = FXCollections.observableArrayList(dealerDB.getCarsBy(dealerDB.executeStatement("SELECT storeName FROM dealerships WHERE storeID = (SELECT storeID FROM admin WHERE username = " + admin.getUserName() + ");")));
+        ListView<String> inventoryList = new ListView<String>(inventory);
+        inventoryPane.getChildren().addAll(inventoryList);
+        inventoryPane.setAlignment(Pos.CENTER);
+        dealershipPane.setCenter(inventoryPane);
+        
+        VBox alterInventory = new VBox(10);
+        alterInventory.getChildren().addAll(inventoryList);
+        alterInventory.setAlignment(Pos.CENTER);
 
-        /* selecting browse store admin displays admin list for admins only */
-        browseAdminBtn.setOnAction( viewAdmin ->{adminList();});
-
-        /* selecting add Vehicle opens pane with text fields to create new tuple */
-        addCarBtn.setOnAction( addcar ->{
+        /* generate fields for database editing */
             /* panes for option inputs */
             HBox addCarPane = new HBox(15);
+            HBox deleteCarPane = new HBox(15);
             VBox vinPane = new VBox(10);
             VBox storePane = new VBox(10);
             VBox pricePane = new VBox(10);
@@ -279,7 +284,7 @@ public class Dealership extends Application
             Button enterBtn = new Button("Enter");
             enterBtn.setFont(Font.font("Arial", 18));
 
-            /* collect textfields into panes and display */
+            /* collect text and textfields into group panes */
             vinPane.getChildren().addAll(vinText, vinField);
             storePane.getChildren().addAll(storeText, storeField);
             pricePane.getChildren().addAll(priceText, priceField);
@@ -291,29 +296,49 @@ public class Dealership extends Application
             mileagePane.getChildren().addAll(mileageText, mileageField);
             enterPane.getChildren().addAll(enterBtn);
             enterPane.setAlignment(Pos.CENTER);
+
+            /* combine all group panes */
             addCarPane.getChildren().addAll(vinPane, storePane, pricePane, yearPane, makePane, modelPane, typePane, colorPane, mileagePane, enterPane);
             addCarPane.setAlignment(Pos.BOTTOM_CENTER);
-            inventoryList.getChildren().addAll(addCarPane);
-            dealershipPane.setBottom(inventoryList);
+            deleteCarPane.getChildren().addAll(vinPane, enterPane);
+            deleteCarPane.setAlignment(Pos.BOTTOM_CENTER);
+            
 
+        /* selecting add Vehicle opens pane with text fields to create new tuple */
+        addCarBtn.setOnAction( addcar ->{
+            dealershipPane.setCenter(inventoryPane);
+            alterInventory.getChildren().addAll(inventoryList, addCarPane);
+            dealershipPane.setCenter(alterInventory);
         });
         /* selecting update Vehicle opens pane with text fields to update tuple */
-        updateCarBtn.setOnAction( updatecar ->{});
+        updateCarBtn.setOnAction( updatecar ->{
+            dealershipPane.setCenter(inventoryPane);
+            alterInventory.getChildren().addAll(inventoryList, addCarPane);
+            dealershipPane.setCenter(alterInventory);
+        });
 
         /* selecting delete Vehicle opens pane with text fields to delete tuple */
-        deleteCarBtn.setOnAction( deletecar ->{});
+        deleteCarBtn.setOnAction( deletecar ->{
+            dealershipPane.setCenter(inventoryPane);
+            alterInventory.getChildren().addAll(inventoryList, deleteCarPane);
+            dealershipPane.setCenter(alterInventory);
+        });
+
+        /* selecting browse store admin displays admin list for admins only */
+        browseAdminBtn.setOnAction( viewAdmin ->{adminList();});
 
         /* selecting log out button logs admin out and returns to home page */
         // change loggedin boolean to false
-        logOut.setOnAction( logout ->{homePage();});
-
+        logOut.setOnAction( logout ->{
+            dealerDB.logoutAdmin(admin.getUserName());
+            homePage();});
     }
 
     /* admin view of admin list */
     private void adminList()
     {
         /* menu and options */
-        VBox menubar = new VBox(50);
+        HBox menubar = new HBox(25);
         Button browseInventoryBtn = new Button("Browse Inventory");
         Button addAdminBtn = new Button("Add Admin");
         Button updateAdminBtn = new Button("Update Admin Info");
@@ -328,15 +353,64 @@ public class Dealership extends Application
         /* Set main menu on stage left */
         menubar.getChildren().addAll(browseInventoryBtn, addAdminBtn, updateAdminBtn, deleteAdminBtn, logOut);
         menubar.setAlignment(Pos.CENTER);
-        dealershipPane.setLeft(menubar);
+        dealershipPane.setTop(menubar);
 
         /* list inventory for admin's store and update buttons for list */
-        VBox adminList = new VBox();
-        Text adminMsg = new Text("List of store Admins goes here!");
-        adminMsg.setFont(Font.font("Arial", 18));
-        adminList.getChildren().addAll(adminMsg);
-        adminList.setAlignment(Pos.CENTER);
-        dealershipPane.setCenter(adminList);
+        VBox adminPane = new VBox();
+        ObservableList<String> adminList = FXCollections.observableArrayList(dealerDB.getAllAdmins());
+        ListView<String> adminView = new ListView<String>(adminList);
+        adminPane.getChildren().addAll(adminView);
+        adminPane.setAlignment(Pos.CENTER);
+        dealershipPane.setCenter(adminPane);
+
+        VBox alterAdmin = new VBox(10);
+        alterAdmin.getChildren().addAll(adminPane);
+        alterAdmin.setAlignment(Pos.CENTER);
+
+        /* generate fields for database editing */
+            /* panes for option inputs */
+            HBox addAdminPane = new HBox(15);
+            VBox deleteAdminPane = new VBox(15);
+            VBox fullnamePane = new VBox(10);
+            VBox usernamePane = new VBox(10);
+            VBox passwordPane = new VBox(10);
+            VBox titlePane = new VBox(10);
+            VBox storeIDPane = new VBox(10);
+            VBox enterPane = new VBox();
+
+            /* textfields for options */
+            Text fullnameText = new Text("VIN");
+            fullnameText.setFont(Font.font("Arial", 18));
+            TextField fullnameField = new TextField();
+            Text usernameText = new Text("Store ID");
+            usernameText.setFont(Font.font("Arial", 18));
+            TextField usernameField = new TextField();
+            Text passwordText = new Text("Price");
+            passwordText.setFont(Font.font("Arial", 18));
+            TextField passwordField = new TextField();
+            Text titleText = new Text("Year");
+            titleText.setFont(Font.font("Arial", 18));
+            TextField titleField = new TextField();
+            Text storeIDText = new Text("Make");
+            storeIDText.setFont(Font.font("Arial", 18));
+            TextField storeIDField = new TextField();
+            Button enterBtn = new Button("Enter");
+            enterBtn.setFont(Font.font("Arial", 18));
+
+            /* collect text and textfields into group panes */
+            fullnamePane.getChildren().addAll(fullnameText, fullnameField);
+            usernamePane.getChildren().addAll(usernameText, usernameField);
+            passwordPane.getChildren().addAll(passwordText, passwordField);
+            titlePane.getChildren().addAll(titleText, titleField);
+            storeIDPane.getChildren().addAll(storeIDText, storeIDField);
+            enterPane.getChildren().addAll(enterBtn);
+            enterPane.setAlignment(Pos.CENTER);
+
+            /* combine all group panes */
+            addAdminPane.getChildren().addAll(fullnamePane, usernamePane, passwordPane, titlePane, storeIDPane, enterPane);
+            addAdminPane.setAlignment(Pos.BOTTOM_CENTER);
+            deleteAdminPane.getChildren().addAll(usernamePane, enterPane);
+            deleteAdminPane.setAlignment(Pos.BOTTOM_CENTER);
 
         /* selecting browse inventory displays inventory page for admins only */
         browseInventoryBtn.setOnAction( viewInventory ->{adminInventory();});
@@ -352,8 +426,33 @@ public class Dealership extends Application
 
         /* selecting log out button logs admin out and returns to home page */
         // change loggedin boolean to false
-        logOut.setOnAction( logout ->{homePage();});
+        logOut.setOnAction( logout ->{
+            dealerDB.logoutAdmin(admin.getUserName());
+            homePage();});
+    }
 
+    public class User
+    {
+	    private String username;
+	    private String password;
+	
+	    public void setUserName(String first)
+	    {
+		    this.username = first;
+	    }
+	    public String getUserName()
+	    {
+		    return username;
+	    }
+
+	    public void setPassword(String last)
+	    {
+		    this.password = last;
+	    }
+	    public String getPassword()
+	    {
+		    return password;
+        }
     }
 
     public static void main(String[] args)

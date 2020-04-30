@@ -152,11 +152,15 @@ public class DBManager {
 		{
 			System.out.println("Failed to find user: Incorrect credentials?");
 		}
-		
 		else
 		{
 			executeStatement("UPDATE admin SET loggedin = true WHERE username = " + username + ");");
 		}
+	}
+
+	public void logoutAdmin(String username)
+	{
+		executeStatement("UPDATE admin SET loggedin = false WHERE username = " + username + ");");
 	}
 }
 
