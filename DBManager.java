@@ -29,20 +29,30 @@ public class DBManager {
 	
 	// General
 	
-	public ArrayList<String> executeStatement(String query)
+	public ArrayList<ArrayList<String>> executeStatement(String query)
 	{
-		ArrayList<String> results = new ArrayList<>();
+		ArrayList<ArrayList<String>> results = new ArrayList<>();
+		int numColumns = 0;
+		
 		
 		try
 		{
 			Statement s = connection.createStatement();
 			ResultSet rs = s.executeQuery(query);
-			
-			int counter = 1;
+						
+			ArrayList<String> row = new ArrayList<>();
 			
 			while (rs.next())
 			{
-				results.add(rs.getString(counter));
+				for (int i = 1; i < rs.getMetaData().getColumnCount(); i++)
+				{
+					row.add(rs.getString(i));
+				}
+				
+				results.add((ArrayList<String>) row.clone());
+				
+				
+				row.clear();				
 			}
 		}
 		
@@ -56,38 +66,39 @@ public class DBManager {
 	
 	// Get-all methods
 	
-	public ArrayList<String> getAllCars()
+	public ArrayList<ArrayList<String>> getAllCars()
 	{
 		
-		ArrayList<String> result = executeStatement("SELECT * FROM ineventories;");
+		ArrayList<ArrayList<String>> result = executeStatement("SELECT * FROM inventories;");
+		
 			
 		return result;
 	}
 	
-	public ArrayList<String> getAllAdmins()
+	public ArrayList<ArrayList<String>> getAllAdmins()
 	{
-		ArrayList<String> result = executeStatement("SELECT * FROM admin;");
+		ArrayList<ArrayList<String>> result = executeStatement("SELECT * FROM admin;");
 		
 		return result;
 	}
 	
-	public ArrayList<String> getAllStores()
+	public ArrayList<ArrayList<String>> getAllStores()
 	{
-		ArrayList<String> result = executeStatement("SELECT * FROM dealerships;");
+		ArrayList<ArrayList<String>> result = executeStatement("SELECT * FROM dealerships;");
 		
 		return result;
 	}
 	
 	// Specific queries
 	
-	public ArrayList<String> getCarsBy(String storeName)
+	public ArrayList<ArrayList<String>> getCarsBy(String storeName)
 	{
-		ArrayList<String> result = executeStatement("SELECT * FROM inventories WHERE storeid in (SELECT storeid FROM dealerships WHERE storeName = " + storeName + ");");
+		ArrayList<ArrayList<String>> result = executeStatement("SELECT * FROM inventories WHERE storeid in (SELECT storeid FROM dealerships WHERE storeName = " + storeName + ");");
 		
 		return result;
 	}
 	
-	public ArrayList<String> getCarsBy(String storeName, String make, String model, Double mileageUpperBound, Double mileageLowerBound, Double priceUpperbound, Double priceLowerBound)
+	public ArrayList<ArrayList<String>> getCarsBy(String storeName, String make, String model, Double mileageUpperBound, Double mileageLowerBound, Double priceUpperbound, Double priceLowerBound)
 	{
 		// NOTE: use "-1" or -1 for any option that must be disabled
 		
@@ -104,7 +115,7 @@ public class DBManager {
 			}
 		}
 		
-		ArrayList<String> result = executeStatement("SELECT * FROM dealerships WHERE " + conditions + ");");
+		ArrayList<ArrayList<String>> result = executeStatement("SELECT * FROM dealerships WHERE " + conditions + ");");
 		
 		return result;
 	}
@@ -146,17 +157,21 @@ public class DBManager {
 	
 	public void loginAdmin(String username, String password)
 	{
-		ArrayList<String> user = executeStatement("SELECT username FROM admin WHERE username = " + username + " AND password = " + password + ");");
+		ArrayList<ArrayList<String>> user = executeStatement("SELECT username FROM admin WHERE username = " + username + " AND password = " + password + ");");
 		
 		if (user.isEmpty())
 		{
 			System.out.println("Failed to find user: Incorrect credentials?");
 		}
-		
 		else
 		{
 			executeStatement("UPDATE admin SET loggedin = true WHERE username = " + username + ");");
 		}
+	}
+
+	public void logoutAdmin(String username)
+	{
+		executeStatement("UPDATE admin SET loggedin = false WHERE username = " + username + ");");
 	}
 }
 
