@@ -159,14 +159,15 @@ public class Dealership extends Application
 //        		carType = new TableColumn("Car Type");
 
         
-        ModularTable allCarsTable = new ModularTable(dealerDB.getAllCars(), new ArrayList<String>(Arrays.asList("VIN", "Color", "Mileage", "Price", "Store ID", "Car Year", "Make", "Model", "Car Type")));
+        ModularTable allCarsTable = new ModularTable(new ArrayList<String>(Arrays.asList("VIN", "Color", "Mileage", "Price", "Store ID", "Car Year", "Make", "Model", "Car Type")));
         
         //vin.setCellValueFactory(param -> new ReadOnlyObjectWrapper(param.getValue()[c]));
         
         inventoryList.getColumns().addAll(allCarsTable.getColumns());
         
-        System.out.println(inventory.size());
+        
         inventoryList.getItems().addAll(inventory);
+        System.out.println(inventoryList.getItems().get(0).size() + " " + dealerDB.getAllCars().get(0).size());
         
         inventoryPane.getChildren().addAll(inventoryList);
         inventoryPane.setAlignment(Pos.CENTER);

@@ -44,7 +44,7 @@ public class DBManager {
 			
 			while (rs.next())
 			{
-				for (int i = 1; i < rs.getMetaData().getColumnCount(); i++)
+				for (int i = 1; i <= rs.getMetaData().getColumnCount(); i++)
 				{
 					row.add(rs.getString(i));
 				}

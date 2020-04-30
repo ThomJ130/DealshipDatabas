@@ -5,19 +5,16 @@ import javafx.scene.control.TableColumn;
 
 public class ModularTable 
 {
-	private ArrayList<ArrayList<String>> data;
 	private ArrayList<TableColumn<ArrayList<String>, String>> columns = new ArrayList<>();
 	
-	public ModularTable(ArrayList<ArrayList<String>> data, ArrayList<String> columnTitles)
-	{
-		this.data = data;
-		
+	public ModularTable(ArrayList<String> columnTitles)
+	{		
 		int i = 0;
 		
 		for (String title : columnTitles)
 		{
-			if (i <= 7)
-				columns.add(generateColumn(title, i));
+			
+			columns.add(generateColumn(title, i));
 			
 			i++;			
 		}
@@ -36,7 +33,6 @@ public class ModularTable
 	
 	public 	ArrayList<TableColumn<ArrayList<String>, String>> getColumns()
 	{
-		System.out.println(columns.size());
 		return columns;
 	}
 }
