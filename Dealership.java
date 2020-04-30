@@ -248,8 +248,8 @@ public class Dealership extends Application
 
         /* list inventory for admin's store and update buttons for list */
         VBox inventoryPane = new VBox(10);
-        //ObservableList<ArrayList<String>> inventory = FXCollections.observableArrayList(dealerDB.getAllCars());
-        ObservableList<String> inventory = FXCollections.observableArrayList(dealerDB.getCarsBy(dealerDB.executeStatement("SELECT storeName FROM dealerships WHERE storeID = (SELECT storeID FROM admin WHERE username = " + admin.getUserName() + ");")));
+        ObservableList<ArrayList<String>> inventory = FXCollections.observableArrayList(dealerDB.getAllCars());
+        //ObservableList<String> inventory = FXCollections.observableArrayList(dealerDB.getCarsBy(dealerDB.executeStatement("SELECT storeName FROM dealerships WHERE storeID = (SELECT storeID FROM admin WHERE username = " + admin.getUserName() + ");")));
         
         TableView<ArrayList<String>> inventoryList = new TableView<>();
         inventoryList.setEditable(true);
@@ -337,15 +337,21 @@ public class Dealership extends Application
 
         /* selecting add Vehicle opens pane with text fields to create new tuple */
         addCarBtn.setOnAction( addcar ->{
-            dealershipPane.setCenter(inventoryPane);
-            alterInventory.getChildren().addAll(inventoryList, addCarPane);
+            alterInventory.getChildren().addAll(addCarPane);
             dealershipPane.setCenter(alterInventory);
+            enterBtn.setOnAction( addcarQuery ->{
+                dealerDB.addCar(vinField.getText(), colorField.getText(), mileageField.getText(), priceField.getText(), storeIDField.getText(), yearField.getText(), makeField.getText(), modelField.getText(), typeField.getText());
+                adminInventory();
+            });
         });
         /* selecting update Vehicle opens pane with text fields to update tuple */
         updateCarBtn.setOnAction( updatecar ->{
-            dealershipPane.setCenter(inventoryPane);
-            alterInventory.getChildren().addAll(inventoryList, addCarPane);
+            alterInventory.getChildren().addAll(addCarPane);
             dealershipPane.setCenter(alterInventory);
+            enterBtn.setOnAction( addcarQuery ->{
+                dealerDB.addCar(vinField.getText(), colorField.getText(), mileageField.getText(), priceField.getText(), storeIDField.getText(), yearField.getText(), makeField.getText(), modelField.getText(), typeField.getText());
+                adminInventory();
+            });
         });
 
         /* selecting delete Vehicle opens pane with text fields to delete tuple */
