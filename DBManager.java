@@ -64,6 +64,21 @@ public class DBManager {
 		return results;
 	}
 	
+	public void executeModification(String mod)
+	{
+		try
+		{
+			Statement s = connection.createStatement();
+			
+			s.execute(mod);
+		}
+		
+		catch (Exception e)
+		{
+			System.out.println(e);
+		}
+	}
+	
 	// Get-all methods
 	
 	public ArrayList<ArrayList<String>> getAllCars()
@@ -77,7 +92,7 @@ public class DBManager {
 	
 	public ArrayList<ArrayList<String>> getAllAdmins()
 	{
-		ArrayList<ArrayList<String>> result = executeStatement("SELECT * FROM admin;");
+		ArrayList<ArrayList<String>> result = executeStatement("SELECT fullname, username, title, storeID, loggedIn FROM admin;");
 		
 		return result;
 	}
@@ -125,53 +140,72 @@ public class DBManager {
 	
 	public void removeAdmin(String username)
 	{
-		executeStatement("DELETE FROM admin WHERE username = " + username + ");");
+		executeModification("DELETE FROM admin WHERE username = \"" + username + "\";");
 	}
 	
 	public void removeCar(String vin)
 	{
-		executeStatement("DELETE FROM inventories WHERE vin = " + vin + ");");
+		executeModification("DELETE FROM inventories WHERE vin = " + vin + ";");
 	}
 	
 	public void removeCompany(String companyName)
 	{
-		executeStatement("DELETE FROM company WHERE name = " + companyName + ");");
+		executeModification("DELETE FROM company WHERE name = \"" + companyName + "\";");
 	}
 	
 	public void removeCompany(int companyID)
 	{
-		executeStatement("DELETE FROM company WHERE name = " + companyID + ");");
+		executeModification("DELETE FROM company WHERE companyID = " + companyID + ";");
 	}
 	
 	// Insertions
 	
 	public void addAdmin(String username, String password, String fullname, String title, int storeID)
 	{
-		executeStatement("INSERT INTO admin VALUES (" + fullname + " " + username + " " + password + " " + title + " " + storeID + " FALSE);");
+		executeModification("INSERT INTO admin VALUES (" + fullname + " " + username + " " + password + " " + title + " " + storeID + " FALSE);");
 	}
 	
 	public void addCar(int vin, String color, double mileage, double price, int storeID, int carYear, String make, String model, String carType)
 	{
-		executeStatement("INSERT INTO admin VALUES (" + vin + " " + color + " " + mileage + " " + price + " " + storeID + " " + carYear + " " + make + " " + model + " " + carType + ");");
+		executeModification("INSERT INTO admin VALUES (" + vin + " " + color + " " + mileage + " " + price + " " + storeID + " " + carYear + " " + make + " " + model + " " + carType + ");");
 	}
 	
-	public void loginAdmin(String username, String password)
+	
+	// Login stuffs
+	
+	public boolean loginAdmin(String username, String password)
 	{
-		ArrayList<ArrayList<String>> user = executeStatement("SELECT username FROM admin WHERE username = " + username + " AND password = " + password + ");");
+		boolean result = false;
 		
-		if (user.isEmpty())
+		
+		if (!password.isEmpty() && !username.isEmpty())
 		{
-			System.out.println("Failed to find user: Incorrect credentials?");
+			ArrayList<ArrayList<String>> user = executeStatement("SELECT username FROM admin WHERE username = \"" + username + "\" AND password = \"" + password + "\";");
+			
+			
+			
+			if (user.isEmpty())
+			{
+				System.out.println("Failed to find user: Incorrect credentials?");
+			}
+			else
+			{
+				executeModification("UPDATE admin SET loggedin = true WHERE username = \"" + username + "\";");
+				result = true;
+			}
 		}
+		
 		else
 		{
-			executeStatement("UPDATE admin SET loggedin = true WHERE username = " + username + ");");
+			System.out.println("Cannot input empty credentials!");
 		}
+		
+		return result;
 	}
 
 	public void logoutAdmin(String username)
 	{
-		executeStatement("UPDATE admin SET loggedin = false WHERE username = " + username + ");");
+		executeModification("UPDATE admin SET loggedin = false WHERE username = \"" + username + "\";");
 	}
 }
 

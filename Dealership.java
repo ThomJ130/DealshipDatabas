@@ -22,7 +22,7 @@ import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-//import javafx.scene.control.Label;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 //import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -95,8 +95,8 @@ public class Dealership extends Application
         enterBtn.setOnAction( loggingin ->{
             admin.setUserName(inputUsername.getText());
             admin.setPassword(inputPassword.getText());
-            dealerDB.loginAdmin(admin.getUserName(), admin.getPassword());
-            adminHome();
+            if (dealerDB.loginAdmin(admin.getUserName(), admin.getPassword()))
+            	adminHome();
         });
 
         /* selecting contact store querys and displays store info */
@@ -146,10 +146,7 @@ public class Dealership extends Application
         TableView<ArrayList<String>> inventoryList = new TableView<>();
         inventoryList.setEditable(true);
         
-        
         ModularTable allCarsTable = new ModularTable(new ArrayList<String>(Arrays.asList("VIN", "Color", "Mileage", "Price", "Store ID", "Car Year", "Make", "Model", "Car Type")));
-        
-        //vin.setCellValueFactory(param -> new ReadOnlyObjectWrapper(param.getValue()[c]));
         
         inventoryList.getColumns().addAll(allCarsTable.getColumns());
         
@@ -230,7 +227,7 @@ public class Dealership extends Application
     {
         /* menu and options */
         HBox menubar = new HBox(25);
-        Button browseAdminBtn = new Button("View Store Admin List");
+        Button browseAdminBtn = new Button("View Admin List");
         Button addCarBtn = new Button("Add Vehicle");
         Button updateCarBtn = new Button("Update Vehicle Info");
         Button deleteCarBtn = new Button("Delete Vehicle");
@@ -451,6 +448,23 @@ public class Dealership extends Application
             addAdminPane.setAlignment(Pos.BOTTOM_CENTER);
             deleteAdminPane.getChildren().addAll(usernamePane, enterPane);
             deleteAdminPane.setAlignment(Pos.BOTTOM_CENTER);
+
+        /* show list of admins*/
+
+        VBox adminListPane = new VBox();
+        ObservableList<ArrayList<String>> administrators = FXCollections.observableArrayList(dealerDB.getAllAdmins());
+        TableView<ArrayList<String>> adminListView = new TableView<>();
+        final Label label = new Label("Administrator List");
+        adminListView.setEditable(true);
+
+        ModularTable allAdminsTable = new ModularTable(new ArrayList<String>(Arrays.asList("Full Name", "Username", "Job Title", "Store ID", "Logged In")));
+        adminListView.getColumns().addAll(allAdminsTable.getColumns());
+        adminListView.getItems().addAll(administrators);
+        
+        adminListPane.getChildren().addAll(adminListView);
+        adminListPane.setAlignment(Pos.CENTER);
+
+        dealershipPane.setCenter(adminListPane);
 
         /* selecting browse inventory displays inventory page for admins only */
         browseInventoryBtn.setOnAction( viewInventory ->{adminInventory();});
