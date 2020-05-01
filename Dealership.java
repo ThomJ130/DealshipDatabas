@@ -367,7 +367,6 @@ public class Dealership extends Application
         /* list inventory for admin's store and update buttons for list */
         VBox inventoryPane = new VBox();
         ObservableList<ArrayList<String>> inventory = FXCollections.observableArrayList(dealerDB.getAllCars());
-        //ObservableList<String> inventory = FXCollections.observableArrayList(dealerDB.getCarsBy(dealerDB.executeStatement("SELECT storeName FROM dealerships WHERE storeID = (SELECT storeID FROM admin WHERE username = " + admin.getUserName() + ");")));
         TableView<ArrayList<String>> inventoryList = new TableView<>();
         inventoryList.setEditable(true);
         
