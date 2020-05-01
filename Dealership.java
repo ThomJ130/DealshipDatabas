@@ -270,29 +270,34 @@ public class Dealership extends Application
         	double mileageUpper;
         	double mileageLower;
         	
-        	
         	if (allFields.get(4).getInput().get(0) != null)
-        		priceUpper = Double.parseDouble(allFields.get(4).getInput().get(0));
-        	else
-        		priceUpper = -1;
-        		
-        	if (allFields.get(4).getInput().get(1) != null)
-        		priceLower = Double.parseDouble(allFields.get(4).getInput().get(1));
+        		priceLower = Double.parseDouble(allFields.get(4).getInput().get(0));
         	else
         		priceLower = -1;
         	
-        	if (allFields.get(5).getInput().get(0) != null)
-        		mileageUpper = Double.parseDouble(allFields.get(5).getInput().get(0));
+        	if (allFields.get(4).getInput().get(1) != null)
+        		priceUpper = Double.parseDouble(allFields.get(4).getInput().get(1));
         	else
-        		mileageUpper = -1;
+        		priceUpper = -1;
         	
-        	if (allFields.get(5).getInput().get(1) != null)
-        		mileageLower = Double.parseDouble(allFields.get(5).getInput().get(1));
+        	
+        	if (allFields.get(5).getInput().get(0) != null)
+        		mileageLower = Double.parseDouble(allFields.get(5).getInput().get(0));
         	else
         		mileageLower = -1;
         	
+        	if (allFields.get(5).getInput().get(1) != null)
+        		mileageUpper = Double.parseDouble(allFields.get(5).getInput().get(1));
+        	else
+        		mileageUpper = -1;
         	
-        	dealershipPane.setCenter(SearchWrapper.updateObservable(dealerDB.getCarsBy(storeName, make, model, carType, priceUpper, priceLower, mileageUpper, mileageLower)));
+        	if(mileageUpper == -1 && mileageLower == -1 && priceUpper == -1 && priceLower == -1 && carType == null && model == null && make == null && storeName == null)
+        		dealershipPane.setCenter(SearchWrapper.updateObservable(dealerDB.getAllCars()));
+        	else
+        		dealershipPane.setCenter(SearchWrapper.updateObservable(dealerDB.getCarsBy(storeName, make, model, carType, mileageUpper, mileageLower,  priceUpper, priceLower)));
+        	
+        	
+        	
         });
         
         returnToInventoryBtn.setOnAction( retrn -> {
@@ -310,7 +315,7 @@ public class Dealership extends Application
         /* menu and options */
         HBox menubar = new HBox(25);
         Button browseInventoryBtn = new Button("Browse Inventory");
-        Button browseAdminBtn = new Button("Browse Store Admin");
+        Button browseAdminBtn = new Button("Browse Admin List");
         Button logOut = new Button("Log Out");
         browseInventoryBtn.setFont(Font.font("Arial", 18));
         browseAdminBtn.setFont(Font.font("Arial", 18));
