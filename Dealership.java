@@ -359,24 +359,21 @@ public class Dealership extends Application
         dealershipPane.setTop(menubar);
 
         /* list inventory for admin's store and update buttons for list */
-        VBox inventoryPane = new VBox(10);
+        VBox inventoryPane = new VBox();
         ObservableList<ArrayList<String>> inventory = FXCollections.observableArrayList(dealerDB.getAllCars());
         //ObservableList<String> inventory = FXCollections.observableArrayList(dealerDB.getCarsBy(dealerDB.executeStatement("SELECT storeName FROM dealerships WHERE storeID = (SELECT storeID FROM admin WHERE username = " + admin.getUserName() + ");")));
-        
         TableView<ArrayList<String>> inventoryList = new TableView<>();
         inventoryList.setEditable(true);
-
-        ModularTable carsTable = new ModularTable(new ArrayList<String>(Arrays.asList("VIN", "Color", "Mileage", "Price", "Store ID", "Car Year", "Make", "Model", "Car Type")));
-
-        inventoryList.getColumns().addAll(carsTable.getColumns());
+        
+        ModularTable allCarsTable = new ModularTable(new ArrayList<String>(Arrays.asList("VIN", "Color", "Mileage", "Price", "Store ID", "Car Year", "Make", "Model", "Car Type")));
+        
+        inventoryList.getColumns().addAll(allCarsTable.getColumns());
         inventoryList.getItems().addAll(inventory);
-        System.out.println(inventoryList.getItems().get(0).size() + " " + dealerDB.getAllCars().get(0).size());
         
         inventoryPane.getChildren().addAll(inventoryList);
         inventoryPane.setAlignment(Pos.CENTER);
-
         dealershipPane.setCenter(inventoryPane);
-        
+      
         VBox alterInventory = new VBox(10);
         alterInventory.getChildren().addAll(inventoryList);
         alterInventory.setAlignment(Pos.CENTER);
