@@ -330,10 +330,14 @@ public class Dealership extends Application
         dealershipPane.setCenter(welcome);
 
         /* selecting browse inventory button displays inventory page for admins only */
-        browseInventoryBtn.setOnAction( viewInventory ->{adminInventory();});
+        browseInventoryBtn.setOnAction( viewInventory ->{
+            welcome.getChildren().clear();
+            adminInventory();});
 
         /* selecting browse store admin displays admin list for admins only */
-        browseAdminBtn.setOnAction( viewAdmin ->{adminList();});
+        browseAdminBtn.setOnAction( viewAdmin ->{
+            welcome.getChildren().clear();
+            adminList();});
 
         /* selecting log out button logs admin out and returns to home page */
         // change loggedin boolean to false
@@ -376,7 +380,7 @@ public class Dealership extends Application
         inventoryList.getItems().addAll(inventory);
         
         inventoryPane.getChildren().addAll(inventoryList);
-        inventoryPane.setAlignment(Pos.CENTER);
+        inventoryPane.setAlignment(Pos.TOP_CENTER);
         dealershipPane.setCenter(inventoryPane);
       
         VBox alterInventory = new VBox(10);
