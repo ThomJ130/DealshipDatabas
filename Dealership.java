@@ -154,9 +154,7 @@ public class Dealership extends Application
         inventoryList.getColumns().addAll(allCarsTable.getColumns());
         
         
-        inventoryList.getItems().addAll(inventory);
-        System.out.println(inventoryList.getItems().get(0).size() + " " + dealerDB.getAllCars().get(0).size());
-        
+        inventoryList.getItems().addAll(inventory);        
         inventoryPane.getChildren().addAll(inventoryList);
         inventoryPane.setAlignment(Pos.CENTER);
         
@@ -164,7 +162,10 @@ public class Dealership extends Application
         
         
         /* selecting log in button displays home page */
-        logInBtn.setOnAction( login -> {homePage();});
+        logInBtn.setOnAction( login -> {
+        	
+        	homePage();
+        	});
         searchBtn.setOnAction( search -> {searchInventoryPage();});
         /* selecting contact store displays store info */
         contactBtn.setOnAction( contact ->{
@@ -234,7 +235,10 @@ public class Dealership extends Application
         
         
         /* selecting log in button displays home page */
-        logInBtn.setOnAction( login ->{homePage();});
+        logInBtn.setOnAction( login ->{
+        	dealershipPane.getChildren().clear();
+        	homePage();
+        	});
 
         /* selecting contact store displays store info */
         contactBtn.setOnAction( contact ->{
@@ -294,10 +298,12 @@ public class Dealership extends Application
         	
         	
         	dealershipPane.setCenter(SearchWrapper.updateObservable(dealerDB.getCarsBy(storeName, make, model, carType, priceUpper, priceLower, mileageUpper, mileageLower)));
-        	
         });
         
-        returnToInventoryBtn.setOnAction( retrn -> {browseInventory();});
+        returnToInventoryBtn.setOnAction( retrn -> {
+        	dealershipPane.getChildren().clear();
+        	browseInventory();
+        	});
         
 
     }
@@ -364,23 +370,23 @@ public class Dealership extends Application
 
         /* list inventory for admin's store and update buttons for list */
         VBox inventoryPane = new VBox(10);
-        ObservableList<ArrayList<String>> inventory = FXCollections.observableArrayList(dealerDB.getAllCars());
-        //ObservableList<String> inventory = FXCollections.observableArrayList(dealerDB.getCarsBy(dealerDB.executeStatement("SELECT storeName FROM dealerships WHERE storeID = (SELECT storeID FROM admin WHERE username = " + admin.getUserName() + ");")));
+        //ObservableList<ArrayList<String>> inventory = FXCollections.observableArrayList(dealerDB.getAllCars());
+        
+        ObservableList<ArrayList<String>> inventory = FXCollections.observableArrayList(dealerDB.getCarsBy(admin.getStoreName()));
         
         TableView<ArrayList<String>> inventoryList = new TableView<>();
-        final Label label = new Label("Inventory List");
         inventoryList.setEditable(true);
 
         ModularTable carsTable = new ModularTable(new ArrayList<String>(Arrays.asList("VIN", "Color", "Mileage", "Price", "Store ID", "Car Year", "Make", "Model", "Car Type")));
 
         inventoryList.getColumns().addAll(carsTable.getColumns());
         inventoryList.getItems().addAll(inventory);
-        System.out.println(inventoryList.getItems().get(0).size() + " " + dealerDB.getAllCars().get(0).size());
-        
+      
         inventoryPane.getChildren().addAll(inventoryList);
         inventoryPane.setAlignment(Pos.CENTER);
-
+        
         dealershipPane.setCenter(inventoryPane);
+        System.out.println(dealershipPane.getChildren().size());
         
         VBox alterInventory = new VBox(10);
         alterInventory.getChildren().addAll(inventoryList);
@@ -674,6 +680,7 @@ public class Dealership extends Application
     {
 	    private String username;
 	    private String password;
+	    private String storeName;
 	
 	    public void setUserName(String first)
 	    {
@@ -692,6 +699,22 @@ public class Dealership extends Application
 	    {
 		    return password;
         }
+	    
+	    
+	    public void setStoreName(String storeName)
+	    {
+	    	this.storeName = storeName;
+	    }
+	    
+	    public String getStoreName()
+	    {
+	    	return storeName;
+	    }
+	    
+	    public void updateStoreName()
+	    {
+	    	storeName = dealerDB.executeStatement("SELECT storeName FROM dealerships WHERE storeID = (SELECT storeID FROM admin WHERE username = " + username).get(0).get(0);
+	    }
     }
 
     public static void main(String[] args)
