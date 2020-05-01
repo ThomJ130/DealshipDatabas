@@ -380,10 +380,6 @@ public class Dealership extends Application
 
       
 
-        
-        
-       ////////////////
-        
     	/* show list of inventory*/
         VBox inventoryPane = new VBox();
         ObservableList<ArrayList<String>> inventory = FXCollections.observableArrayList(dealerDB.getCarsBy(admin.getStoreName()));
@@ -402,9 +398,6 @@ public class Dealership extends Application
         
         dealershipPane.setCenter(inventoryPane);
         
-
-       
-        //////////
 
         /* generate fields for database editing */
         /* panes for option inputs */
@@ -472,18 +465,18 @@ public class Dealership extends Application
         enterPane.setAlignment(Pos.CENTER);
 
         /* combine all group panes */
-        addCarPane.getChildren().addAll(vinPane, storePane, pricePane, yearPane, makePane, modelPane, typePane, colorPane, mileagePane, enterPane);
-        addCarPane.setAlignment(Pos.BOTTOM_CENTER);
-        updateCarPane.getChildren().addAll(currentvinPane, vinPane, storePane, pricePane, yearPane, makePane, modelPane, typePane, colorPane, mileagePane, enterPane);
-        updateCarPane.setAlignment(Pos.BOTTOM_CENTER);
-        deleteCarPane.getChildren().addAll(currentvinPane, enterPane);
-        deleteCarPane.setAlignment(Pos.BOTTOM_CENTER);
+
+
+
             
 
         /* selecting add Vehicle opens pane with text fields to create new tuple */
         addCarBtn.setOnAction( addcar ->{
+            addCarPane.getChildren().addAll(vinPane, storePane, pricePane, yearPane, makePane, modelPane, typePane, colorPane, mileagePane, enterBtn);
+            addCarPane.setAlignment(Pos.BOTTOM_CENTER);
             inventoryPane.getChildren().clear();
-            inventoryPane.getChildren().addAll(inventoryList, addCarPane);
+            inventoryPane.getChildren().addAll(inventoryList);
+            inventoryPane.getChildren().addAll(addCarPane);
             inventoryPane.setAlignment(Pos.CENTER);
             dealershipPane.setCenter(inventoryPane);
             enterBtn.setOnAction( addcarQuery ->{
@@ -491,32 +484,37 @@ public class Dealership extends Application
                 adminInventory();
             });
         });
+        
+
 
         /* selecting update Vehicle opens pane with text fields to update tuple */
         updateCarBtn.setOnAction( updatecar ->{
+            updateCarPane.getChildren().addAll(currentvinPane, vinPane, storePane, pricePane, yearPane, makePane, modelPane, typePane, colorPane, mileagePane, enterBtn);
+            updateCarPane.setAlignment(Pos.BOTTOM_CENTER);
         	inventoryPane.getChildren().clear();
-        	inventoryPane.getChildren().addAll(inventoryList, updateCarPane);
+        	inventoryPane.getChildren().addAll(inventoryList);
+        	inventoryPane.getChildren().addAll(updateCarPane);
         	inventoryPane.setAlignment(Pos.CENTER);
             dealershipPane.setCenter(inventoryPane);
             enterBtn.setOnAction( updatecarQuery ->{
                 if (!(vinField.getText().isEmpty()))
-                    dealerDB.executeModification("UPDATE inventories SET VIN = " + vinField.getText() + " WHERE VIN = " + Integer.parseInt(currentvinField.getText()) + ");");
+                    dealerDB.executeModification("UPDATE inventories SET VIN = " + vinField.getText() + " WHERE VIN = " + Integer.parseInt(currentvinField.getText()) + ";");
                 else if (!(colorField.getText().isEmpty()))
-                    dealerDB.executeModification("UPDATE inventories SET color = " + colorField.getText() + " WHERE VIN = " + Integer.parseInt(currentvinField.getText()) + ");");
+                    dealerDB.executeModification("UPDATE inventories SET color = \"" + colorField.getText() + " WHERE VIN = " + Integer.parseInt(currentvinField.getText()) + ";");
                 else if (!(mileageField.getText().isEmpty()))
-                    dealerDB.executeModification("UPDATE inventories SET mileage = " + Double.parseDouble(mileageField.getText()) + " WHERE VIN = " + Integer.parseInt(currentvinField.getText()) + ");");
+                    dealerDB.executeModification("UPDATE inventories SET mileage = " + Double.parseDouble(mileageField.getText()) + " WHERE VIN = " + Integer.parseInt(currentvinField.getText()) + ";");
                 else if (!(priceField.getText().isEmpty()))
-                    dealerDB.executeModification("UPDATE inventories SET price = " + Double.parseDouble(priceField.getText()) + " WHERE VIN = " + Integer.parseInt(currentvinField.getText()) + ");");
+                    dealerDB.executeModification("UPDATE inventories SET price = " + Double.parseDouble(priceField.getText()) + " WHERE VIN = " + Integer.parseInt(currentvinField.getText()) + ";");
                 else if (!(storeField.getText().isEmpty()))
-                    dealerDB.executeModification("UPDATE inventories SET storeID = " + Integer.parseInt(storeField.getText()) + " WHERE VIN = " + Integer.parseInt(currentvinField.getText()) + ");");
+                    dealerDB.executeModification("UPDATE inventories SET storeID = " + Integer.parseInt(storeField.getText()) + " WHERE VIN = " + Integer.parseInt(currentvinField.getText()) + ";");
                 else if (!(yearField.getText().isEmpty()))
-                    dealerDB.executeModification("UPDATE inventories SET carYear = " + Integer.parseInt(yearField.getText()) + " WHERE VIN = " + Integer.parseInt(currentvinField.getText()) + ");");
+                    dealerDB.executeModification("UPDATE inventories SET carYear = " + Integer.parseInt(yearField.getText()) + " WHERE VIN = " + Integer.parseInt(currentvinField.getText()) + ";");
                 else if (!(makeField.getText().isEmpty()))
-                    dealerDB.executeModification("UPDATE inventories SET make = " + makeField.getText() + " WHERE VIN = " + Integer.parseInt(currentvinField.getText()) + ");");
+                    dealerDB.executeModification("UPDATE inventories SET make = \"" + makeField.getText() + "\" WHERE VIN = " + Integer.parseInt(currentvinField.getText()) + ";");
                 else if (!(modelField.getText().isEmpty()))
-                    dealerDB.executeModification("UPDATE inventories SET model = " + modelField.getText() + " WHERE VIN = " + Integer.parseInt(currentvinField.getText()) + ");");
+                    dealerDB.executeModification("UPDATE inventories SET model = \"" + modelField.getText() + "\" WHERE VIN = " + Integer.parseInt(currentvinField.getText()) + ";");
                 else if (!(typeField.getText().isEmpty()))
-                    dealerDB.executeModification("UPDATE inventories SET carType = " + typeField.getText() + " WHERE VIN = " + Integer.parseInt(currentvinField.getText()) + ");");
+                    dealerDB.executeModification("UPDATE inventories SET carType = \"" + typeField.getText() + "\" WHERE VIN = " + Integer.parseInt(currentvinField.getText()) + ";");
             else {}
                 adminInventory();
             });
@@ -524,6 +522,8 @@ public class Dealership extends Application
 
         /* selecting delete Vehicle opens pane with text fields to delete tuple */
         deleteCarBtn.setOnAction( deletecar ->{
+            deleteCarPane.getChildren().addAll(currentvinPane, enterBtn);
+            deleteCarPane.setAlignment(Pos.BOTTOM_CENTER);
         	inventoryPane.getChildren().clear();
         	inventoryPane.getChildren().addAll(inventoryList, deleteCarPane);
         	inventoryPane.setAlignment(Pos.CENTER);
@@ -574,9 +574,7 @@ public class Dealership extends Application
         adminPane.setAlignment(Pos.CENTER);
         dealershipPane.setCenter(adminPane);
 
-        VBox alterAdmin = new VBox(10);
-        alterAdmin.getChildren().addAll(adminPane);
-        alterAdmin.setAlignment(Pos.CENTER);
+
 
         /* generate fields for database editing */
             /* panes for option inputs */
@@ -624,12 +622,10 @@ public class Dealership extends Application
             enterPane.setAlignment(Pos.CENTER);
 
             /* combine all group panes */
-            addAdminPane.getChildren().addAll(fullnamePane, usernamePane, passwordPane, titlePane, storeIDPane, enterPane);
-            addAdminPane.setAlignment(Pos.BOTTOM_CENTER);
-            updateAdminPane.getChildren().addAll(userUpdatePane, fullnamePane, usernamePane, passwordPane, titlePane, storeIDPane, enterPane);
-            updateAdminPane.setAlignment(Pos.BOTTOM_CENTER);
-            deleteAdminPane.getChildren().addAll(userUpdatePane, enterPane);
-            deleteAdminPane.setAlignment(Pos.BOTTOM_CENTER);
+
+
+
+
 
         /* show list of admins*/
 
@@ -652,6 +648,8 @@ public class Dealership extends Application
 
         /* selecting add admin opens pane with text fields to create new tuple */
         addAdminBtn.setOnAction( addadmin ->{
+            addAdminPane.getChildren().addAll(fullnamePane, usernamePane, passwordPane, titlePane, storeIDPane, enterBtn);
+            addAdminPane.setAlignment(Pos.BOTTOM_CENTER);
             adminListPane.getChildren().clear();
             adminListPane.getChildren().addAll(adminListView, addAdminPane);
             adminListPane.setAlignment(Pos.CENTER);
@@ -664,28 +662,32 @@ public class Dealership extends Application
 
         /* selecting update admin opens pane with text fields to update tuple */
         updateAdminBtn.setOnAction( updateadmin ->{
+            updateAdminPane.getChildren().addAll(userUpdatePane, fullnamePane, usernamePane, passwordPane, titlePane, storeIDPane, enterBtn);
+            updateAdminPane.setAlignment(Pos.BOTTOM_CENTER);
             adminListPane.getChildren().clear();
             adminListPane.getChildren().addAll(adminListView, updateAdminPane);
             adminListPane.setAlignment(Pos.CENTER);
             dealershipPane.setCenter(adminListPane);
             enterBtn.setOnAction( updateAdminQuery ->{
                 if (!(fullnameField.getText().isEmpty()))
-                    dealerDB.executeModification("UPDATE admin SET fullname = " + fullnameField.getText() + " WHERE username = " + userUpdateField.getText() + ");");
-                else if (!(usernameField.getText().isEmpty()))
-                    dealerDB.executeModification("UPDATE admin SET username = " + usernameField.getText() + " WHERE username = " + userUpdateField.getText() + ");");
-                else if (!(passwordField.getText().isEmpty()))
-                    dealerDB.executeModification("UPDATE admin SET password = " + passwordField.getText() + " WHERE username = " + userUpdateField.getText() + ");");
-                else if (!(titleField.getText().isEmpty()))
-                    dealerDB.executeModification("UPDATE admin SET title = " + titleField.getText() + " WHERE username = " + userUpdateField.getText() + ");");
-                else if (!(storeIDField.getText().isEmpty()))
-                    dealerDB.executeModification("UPDATE admin SET storeID = " + Integer.parseInt(storeIDField.getText()) + " WHERE username = " + userUpdateField.getText() + ");");
-                else {}
+                    dealerDB.executeModification("UPDATE admin SET fullname = \"" + fullnameField.getText() + "\" WHERE username = \"" + userUpdateField.getText() + "\";");
+                if (!(usernameField.getText().isEmpty()))
+                    dealerDB.executeModification("UPDATE admin SET username = \"" + usernameField.getText() + "\" WHERE username = \"" + userUpdateField.getText() + "\";");
+                if (!(passwordField.getText().isEmpty()))
+                    dealerDB.executeModification("UPDATE admin SET password = \"" + passwordField.getText() + "\" WHERE username = \"" + userUpdateField.getText() + "\";");
+                if (!(titleField.getText().isEmpty()))
+                    dealerDB.executeModification("UPDATE admin SET title = \"" + titleField.getText() + "\" WHERE username = \"" + userUpdateField.getText() + "\";");
+                if (!(storeIDField.getText().isEmpty()))
+                    dealerDB.executeModification("UPDATE admin SET storeID = " + Integer.parseInt(storeIDField.getText()) + " WHERE username = \"" + userUpdateField.getText() + "\";");
+                
                 adminList();
             });
         });
 
         /* selecting delete admin opens pane with text fields to delete tuple */
         deleteAdminBtn.setOnAction( deleteadmin ->{
+            deleteAdminPane.getChildren().addAll(userUpdatePane, enterBtn);
+            deleteAdminPane.setAlignment(Pos.BOTTOM_CENTER);
             adminListPane.getChildren().clear();
             adminListPane.getChildren().addAll(adminListView, deleteAdminPane);
             adminListPane.setAlignment(Pos.CENTER);

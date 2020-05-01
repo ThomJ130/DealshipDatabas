@@ -67,11 +67,12 @@ public class DBManager {
 	
 	public void executeModification(String mod)
 	{
+		System.out.println(mod);
 		try
 		{
 			Statement s = connection.createStatement();
 			
-			s.execute(mod);
+			System.out.println(s.execute(mod));
 		}
 		
 		catch (Exception e)
@@ -193,12 +194,13 @@ public class DBManager {
 	
 	public void addAdmin(String username, String password, String fullname, String title, int storeID)
 	{
-		executeModification("INSERT INTO admin VALUES (" + fullname + " " + username + " " + password + " " + title + " " + storeID + " FALSE);");
+		executeModification("INSERT INTO admin VALUES (\"" + fullname + "\", \"" + username + "\", \"" + password + "\", \"" + title + "\", " + storeID + ", FALSE);");
+		System.out.println("INSERT INTO admin VALUES (\"" + fullname + "\", \"" + username + "\", \"" + password + "\", \"" + title + "\", " + storeID + ", FALSE);");
 	}
 	
 	public void addCar(int vin, String color, double mileage, double price, int storeID, int carYear, String make, String model, String carType)
 	{
-		executeModification("INSERT INTO admin VALUES (" + vin + " " + color + " " + mileage + " " + price + " " + storeID + " " + carYear + " " + make + " " + model + " " + carType + ");");
+		executeModification("INSERT INTO inventories VALUES (" + vin + ", \"" + color + "\", " + mileage + ", " + price + ", " + storeID + ", " + carYear + ", \"" + make + "\", \"" + model + "\", \"" + carType + "\");");
 	}
 	
 	
