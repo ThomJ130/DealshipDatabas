@@ -109,7 +109,9 @@ public class DBManager {
 	
 	public ArrayList<ArrayList<String>> getCarsBy(String storeName)
 	{
-		ArrayList<ArrayList<String>> result = executeStatement("SELECT * FROM inventories WHERE storeid in (SELECT storeid FROM dealerships WHERE storeName = " + storeName + ");");
+		
+		System.out.println("SELECT * FROM inventories WHERE storeid in (SELECT storeid FROM dealerships WHERE storeName = \"" + storeName + "\");");
+		ArrayList<ArrayList<String>> result = executeStatement("SELECT * FROM inventories WHERE storeid in (SELECT storeid FROM dealerships WHERE storeName = \"" + storeName + "\");");
 		
 		return result;
 	}
