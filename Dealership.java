@@ -10,25 +10,18 @@
 of this program is primarily my own work.
 ------------------------------------------------ */
 
-//import java.sql.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 import javafx.application.Application;
-//import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
-//import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-//import javafx.scene.control.Menu;
-//import javafx.scene.control.MenuBar;
-//import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -88,7 +81,7 @@ public class Dealership extends Application
         passwordTextbox.getChildren().addAll(askPassword, inputPassword);
         usernameTextbox.setAlignment(Pos.CENTER);
         passwordTextbox.setAlignment(Pos.CENTER);
-        logInFields.getChildren().addAll(usernameTextbox, passwordTextbox, enterBtn);
+        logInFields.getChildren().addAll(wronglogin, usernameTextbox, passwordTextbox, enterBtn);
         logInFields.setAlignment(Pos.CENTER);
         dealershipPane.setCenter(logInFields);
 
@@ -97,7 +90,9 @@ public class Dealership extends Application
             admin.setUserName(inputUsername.getText());
             admin.setPassword(inputPassword.getText());
             if (dealerDB.loginAdmin(admin.getUserName(), admin.getPassword()))
-            	adminHome();
+                adminHome();
+            else
+                wronglogin.setVisible(true);
         });
 
         /* selecting contact store querys and displays store info */
@@ -343,6 +338,7 @@ public class Dealership extends Application
         /* selecting log out button logs admin out and returns to home page */
         // change loggedin boolean to false
         logOut.setOnAction( logout ->{
+            welcome.getChildren().clear();
             dealerDB.logoutAdmin(admin.getUserName());
             homePage();});
     }
@@ -369,25 +365,21 @@ public class Dealership extends Application
         dealershipPane.setTop(menubar);
 
         /* list inventory for admin's store and update buttons for list */
-        VBox inventoryPane = new VBox(10);
-        //ObservableList<ArrayList<String>> inventory = FXCollections.observableArrayList(dealerDB.getAllCars());
-        
-        ObservableList<ArrayList<String>> inventory = FXCollections.observableArrayList(dealerDB.getCarsBy(admin.getStoreName()));
-        
+        VBox inventoryPane = new VBox();
+        ObservableList<ArrayList<String>> inventory = FXCollections.observableArrayList(dealerDB.getAllCars());
+        //ObservableList<String> inventory = FXCollections.observableArrayList(dealerDB.getCarsBy(dealerDB.executeStatement("SELECT storeName FROM dealerships WHERE storeID = (SELECT storeID FROM admin WHERE username = " + admin.getUserName() + ");")));
         TableView<ArrayList<String>> inventoryList = new TableView<>();
         inventoryList.setEditable(true);
-
-        ModularTable carsTable = new ModularTable(new ArrayList<String>(Arrays.asList("VIN", "Color", "Mileage", "Price", "Store ID", "Car Year", "Make", "Model", "Car Type")));
-
-        inventoryList.getColumns().addAll(carsTable.getColumns());
+        
+        ModularTable allCarsTable = new ModularTable(new ArrayList<String>(Arrays.asList("VIN", "Color", "Mileage", "Price", "Store ID", "Car Year", "Make", "Model", "Car Type")));
+        
+        inventoryList.getColumns().addAll(allCarsTable.getColumns());
         inventoryList.getItems().addAll(inventory);
-      
+        
         inventoryPane.getChildren().addAll(inventoryList);
         inventoryPane.setAlignment(Pos.CENTER);
-        
         dealershipPane.setCenter(inventoryPane);
-        System.out.println(dealershipPane.getChildren().size());
-        
+      
         VBox alterInventory = new VBox(10);
         alterInventory.getChildren().addAll(inventoryList);
         alterInventory.setAlignment(Pos.CENTER);
@@ -468,7 +460,9 @@ public class Dealership extends Application
 
         /* selecting add Vehicle opens pane with text fields to create new tuple */
         addCarBtn.setOnAction( addcar ->{
-            alterInventory.getChildren().addAll(addCarPane);
+            alterInventory.getChildren().clear();
+            alterInventory.getChildren().addAll(inventoryList, addCarPane);
+            alterInventory.setAlignment(Pos.CENTER);
             dealershipPane.setCenter(alterInventory);
             enterBtn.setOnAction( addcarQuery ->{
                 dealerDB.addCar(Integer.parseInt(vinField.getText()), colorField.getText(), Double.parseDouble(mileageField.getText()), Double.parseDouble(priceField.getText()), Integer.parseInt(storeField.getText()), Integer.parseInt(yearField.getText()), makeField.getText(), modelField.getText(), typeField.getText());
@@ -477,7 +471,9 @@ public class Dealership extends Application
         });
         /* selecting update Vehicle opens pane with text fields to update tuple */
         updateCarBtn.setOnAction( updatecar ->{
-            alterInventory.getChildren().addAll(updateCarPane);
+            alterInventory.getChildren().clear();
+            alterInventory.getChildren().addAll(inventoryList, updateCarPane);
+            alterInventory.setAlignment(Pos.CENTER);
             dealershipPane.setCenter(alterInventory);
             enterBtn.setOnAction( updatecarQuery ->{
                 if (!(vinField.getText().isEmpty()))
@@ -505,7 +501,9 @@ public class Dealership extends Application
 
         /* selecting delete Vehicle opens pane with text fields to delete tuple */
         deleteCarBtn.setOnAction( deletecar ->{
-            alterInventory.getChildren().addAll(deleteCarPane);
+            alterInventory.getChildren().clear();
+            alterInventory.getChildren().addAll(inventoryList, deleteCarPane);
+            alterInventory.setAlignment(Pos.CENTER);
             dealershipPane.setCenter(alterInventory);
             enterBtn.setOnAction( deletecarQuery ->{
                 dealerDB.removeCar(currentvinField.getText());
@@ -519,6 +517,7 @@ public class Dealership extends Application
         /* selecting log out button logs admin out and returns to home page */
         // change loggedin boolean to false
         logOut.setOnAction( logout ->{
+            alterInventory.getChildren().clear();
             dealerDB.logoutAdmin(admin.getUserName());
             homePage();});
     }
@@ -614,7 +613,6 @@ public class Dealership extends Application
         VBox adminListPane = new VBox();
         ObservableList<ArrayList<String>> administrators = FXCollections.observableArrayList(dealerDB.getAllAdmins());
         TableView<ArrayList<String>> adminListView = new TableView<>();
-        final Label label = new Label("Administrator List");
         adminListView.setEditable(true);
 
         ModularTable allAdminsTable = new ModularTable(new ArrayList<String>(Arrays.asList("Full Name", "Username", "Job Title", "Store ID", "Logged In")));
@@ -641,7 +639,9 @@ public class Dealership extends Application
 
         /* selecting update admin opens pane with text fields to update tuple */
         updateAdminBtn.setOnAction( updateadmin ->{
-            adminListPane.getChildren().addAll(updateAdminPane);
+            adminListPane.getChildren().clear();
+            adminListPane.getChildren().addAll(adminListView, updateAdminPane);
+            adminListPane.setAlignment(Pos.CENTER);
             dealershipPane.setCenter(adminListPane);
             enterBtn.setOnAction( updateAdminQuery ->{
                 if (!(fullnameField.getText().isEmpty()))
@@ -661,7 +661,9 @@ public class Dealership extends Application
 
         /* selecting delete admin opens pane with text fields to delete tuple */
         deleteAdminBtn.setOnAction( deleteadmin ->{
-            adminListPane.getChildren().addAll(deleteAdminPane);
+            adminListPane.getChildren().clear();
+            adminListPane.getChildren().addAll(adminListView, deleteAdminPane);
+            adminListPane.setAlignment(Pos.CENTER);
             dealershipPane.setCenter(adminListPane);
             enterBtn.setOnAction( deleteAdminQuery ->{
                 dealerDB.removeAdmin(userUpdateField.getText());
@@ -672,6 +674,7 @@ public class Dealership extends Application
         /* selecting log out button logs admin out and returns to home page */
         // change loggedin boolean to false
         logOut.setOnAction( logout ->{
+            adminListPane.getChildren().clear();
             dealerDB.logoutAdmin(admin.getUserName());
             homePage();});
     }
