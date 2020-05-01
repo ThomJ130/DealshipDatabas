@@ -383,77 +383,77 @@ public class Dealership extends Application
         alterInventory.setAlignment(Pos.CENTER);
 
         /* generate fields for database editing */
-            /* panes for option inputs */
-            HBox addCarPane = new HBox(15);
-            HBox updateCarPane = new HBox(15);
-            HBox deleteCarPane = new HBox(15);
-            VBox currentvinPane = new VBox(10);
-            VBox vinPane = new VBox(10);
-            VBox storePane = new VBox(10);
-            VBox pricePane = new VBox(10);
-            VBox yearPane = new VBox(10);
-            VBox makePane = new VBox(10);
-            VBox modelPane = new VBox(10);
-            VBox typePane = new VBox(10);
-            VBox colorPane = new VBox(10);
-            VBox mileagePane = new VBox(10);
-            VBox enterPane = new VBox();
+        /* panes for option inputs */
+        HBox addCarPane = new HBox(15);
+        HBox updateCarPane = new HBox(15);
+        HBox deleteCarPane = new HBox(15);
+        VBox currentvinPane = new VBox(10);
+        VBox vinPane = new VBox(10);
+        VBox storePane = new VBox(10);
+        VBox pricePane = new VBox(10);
+        VBox yearPane = new VBox(10);
+        VBox makePane = new VBox(10);
+        VBox modelPane = new VBox(10);
+        VBox typePane = new VBox(10);
+        VBox colorPane = new VBox(10);
+        VBox mileagePane = new VBox(10);
+        VBox enterPane = new VBox();
 
-            /* textfields for options */
-            Text currentvinText = new Text("Current VIN");
-            currentvinText.setFont(Font.font("Arial", 18));
-            TextField currentvinField = new TextField();
-            Text vinText = new Text("VIN");
-            vinText.setFont(Font.font("Arial", 18));
-            TextField vinField = new TextField();
-            Text storeText = new Text("Store ID");
-            storeText.setFont(Font.font("Arial", 18));
-            TextField storeField = new TextField();
-            Text priceText = new Text("Price");
-            priceText.setFont(Font.font("Arial", 18));
-            TextField priceField = new TextField();
-            Text yearText = new Text("Year");
-            yearText.setFont(Font.font("Arial", 18));
-            TextField yearField = new TextField();
-            Text makeText = new Text("Make");
-            makeText.setFont(Font.font("Arial", 18));
-            TextField makeField = new TextField();
-            Text modelText = new Text("Model");
-            modelText.setFont(Font.font("Arial", 18));
-            TextField modelField = new TextField();
-            Text typeText = new Text("Type");
-            typeText.setFont(Font.font("Arial", 18));
-            TextField typeField = new TextField();
-            Text colorText = new Text("Color");
-            colorText.setFont(Font.font("Arial", 18));
-            TextField colorField = new TextField();
-            Text mileageText = new Text("Mileage");
-            mileageText.setFont(Font.font("Arial", 18));
-            TextField mileageField = new TextField();
-            Button enterBtn = new Button("Enter");
-            enterBtn.setFont(Font.font("Arial", 18));
+        /* textfields for options */
+        Text currentvinText = new Text("Current VIN");
+        currentvinText.setFont(Font.font("Arial", 18));
+        TextField currentvinField = new TextField();
+        Text vinText = new Text("VIN");
+        vinText.setFont(Font.font("Arial", 18));
+        TextField vinField = new TextField();
+        Text storeText = new Text("Store ID");
+        storeText.setFont(Font.font("Arial", 18));
+        TextField storeField = new TextField();
+        Text priceText = new Text("Price");
+        priceText.setFont(Font.font("Arial", 18));
+        TextField priceField = new TextField();
+        Text yearText = new Text("Year");
+        yearText.setFont(Font.font("Arial", 18));
+        TextField yearField = new TextField();
+        Text makeText = new Text("Make");
+        makeText.setFont(Font.font("Arial", 18));
+        TextField makeField = new TextField();
+        Text modelText = new Text("Model");
+        modelText.setFont(Font.font("Arial", 18));
+        TextField modelField = new TextField();
+        Text typeText = new Text("Type");
+        typeText.setFont(Font.font("Arial", 18));
+        TextField typeField = new TextField();
+        Text colorText = new Text("Color");
+        colorText.setFont(Font.font("Arial", 18));
+        TextField colorField = new TextField();
+        Text mileageText = new Text("Mileage");
+        mileageText.setFont(Font.font("Arial", 18));
+        TextField mileageField = new TextField();
+        Button enterBtn = new Button("Enter");
+        enterBtn.setFont(Font.font("Arial", 18));
 
-            /* collect text and textfields into group panes */
-            currentvinPane.getChildren().addAll(currentvinText, currentvinField);
-            vinPane.getChildren().addAll(vinText, vinField);
-            storePane.getChildren().addAll(storeText, storeField);
-            pricePane.getChildren().addAll(priceText, priceField);
-            yearPane.getChildren().addAll(yearText, yearField);
-            makePane.getChildren().addAll(makeText, makeField);
-            modelPane.getChildren().addAll(modelText, modelField);
-            typePane.getChildren().addAll(typeText, typeField);
-            colorPane.getChildren().addAll(colorText, colorField);
-            mileagePane.getChildren().addAll(mileageText, mileageField);
-            enterPane.getChildren().addAll(enterBtn);
-            enterPane.setAlignment(Pos.CENTER);
+        /* collect text and textfields into group panes */
+        currentvinPane.getChildren().addAll(currentvinText, currentvinField);
+        vinPane.getChildren().addAll(vinText, vinField);
+        storePane.getChildren().addAll(storeText, storeField);
+        pricePane.getChildren().addAll(priceText, priceField);
+        yearPane.getChildren().addAll(yearText, yearField);
+        makePane.getChildren().addAll(makeText, makeField);
+        modelPane.getChildren().addAll(modelText, modelField);
+        typePane.getChildren().addAll(typeText, typeField);
+        colorPane.getChildren().addAll(colorText, colorField);
+        mileagePane.getChildren().addAll(mileageText, mileageField);
+        enterPane.getChildren().addAll(enterBtn);
+        enterPane.setAlignment(Pos.CENTER);
 
-            /* combine all group panes */
-            addCarPane.getChildren().addAll(vinPane, storePane, pricePane, yearPane, makePane, modelPane, typePane, colorPane, mileagePane, enterPane);
-            addCarPane.setAlignment(Pos.BOTTOM_CENTER);
-            updateCarPane.getChildren().addAll(currentvinPane, vinPane, storePane, pricePane, yearPane, makePane, modelPane, typePane, colorPane, mileagePane, enterPane);
-            updateCarPane.setAlignment(Pos.BOTTOM_CENTER);
-            deleteCarPane.getChildren().addAll(currentvinPane, enterPane);
-            deleteCarPane.setAlignment(Pos.BOTTOM_CENTER);
+        /* combine all group panes */
+        addCarPane.getChildren().addAll(vinPane, storePane, pricePane, yearPane, makePane, modelPane, typePane, colorPane, mileagePane, enterPane);
+        addCarPane.setAlignment(Pos.BOTTOM_CENTER);
+        updateCarPane.getChildren().addAll(currentvinPane, vinPane, storePane, pricePane, yearPane, makePane, modelPane, typePane, colorPane, mileagePane, enterPane);
+        updateCarPane.setAlignment(Pos.BOTTOM_CENTER);
+        deleteCarPane.getChildren().addAll(currentvinPane, enterPane);
+        deleteCarPane.setAlignment(Pos.BOTTOM_CENTER);
             
 
         /* selecting add Vehicle opens pane with text fields to create new tuple */
@@ -467,6 +467,7 @@ public class Dealership extends Application
                 adminInventory();
             });
         });
+
         /* selecting update Vehicle opens pane with text fields to update tuple */
         updateCarBtn.setOnAction( updatecar ->{
             alterInventory.getChildren().clear();
@@ -627,7 +628,9 @@ public class Dealership extends Application
 
         /* selecting add admin opens pane with text fields to create new tuple */
         addAdminBtn.setOnAction( addadmin ->{
-            adminListPane.getChildren().addAll(addAdminPane);
+            adminListPane.getChildren().clear();
+            adminListPane.getChildren().addAll(adminListView, addAdminPane);
+            adminListPane.setAlignment(Pos.CENTER);
             dealershipPane.setCenter(adminListPane);
             enterBtn.setOnAction( addAdminQuery ->{
                 dealerDB.addAdmin(usernameField.getText(), passwordField.getText(), fullnameField.getText(), titleField.getText(), Integer.parseInt(storeIDField.getText()));
